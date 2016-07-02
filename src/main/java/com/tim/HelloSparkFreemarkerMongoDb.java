@@ -15,6 +15,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static spark.Spark.halt;
+
 /**
  * Created by timcarter on 31/05/2015.
  */
@@ -29,23 +31,17 @@ public class HelloSparkFreemarkerMongoDb {
         collectionName.drop();
         collectionName.insertOne(new Document("name", "Tim from a MongoDoc"));
 
-        Spark.get(new Route("/") {
-
-            @Override
-            public Object handle(Request request, Response response) {
-                final StringWriter output = new StringWriter();
-                try {
-                    final Template template = configuration.getTemplate("hello.ftl");
-                    final Document document = collectionName.find().first();
-                    template.process(document, output);
-                } catch (Exception e) {
-                    halt(500);
-                    e.printStackTrace();
-                }
-                return output;
+        Spark.get("/", (request, response) -> {
+            final StringWriter output = new StringWriter();
+            try {
+                final Template template = configuration.getTemplate("hello.ftl");
+                final Document document = collectionName.find().first();
+                template.process(document, output);
+            } catch (Exception e) {
+                halt(500);
+                e.printStackTrace();
             }
+            return output;
         });
-
-
     }
 }

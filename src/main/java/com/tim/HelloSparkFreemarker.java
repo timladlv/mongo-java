@@ -11,6 +11,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static spark.Spark.halt;
+
 /**
  * Created by timcarter on 31/05/2015.
  */
@@ -19,24 +21,18 @@ public class HelloSparkFreemarker {
         final Configuration configuration = new Configuration(Configuration.VERSION_2_3_22);
         configuration.setClassForTemplateLoading(HelloSparkFreemarker.class, "/");
 
-        Spark.get(new Route("/") {
-
-            @Override
-            public Object handle(Request request, Response response) {
-                StringWriter output = new StringWriter();
-                try {
-                    Template template = configuration.getTemplate("hello.ftl");
-                    Map<String, Object> hello = new HashMap<>();
-                    hello.put("name", "Freemarker");
-                    template.process(hello, output);
-                } catch (Exception e) {
-                    halt(500);
-                    e.printStackTrace();
-                }
-                return output;
+        Spark.get("/", (request, response) -> {
+            StringWriter output = new StringWriter();
+            try {
+                Template template = configuration.getTemplate("hello.ftl");
+                Map<String, Object> hello = new HashMap<>();
+                hello.put("name", "Freemarker");
+                template.process(hello, output);
+            } catch (Exception e) {
+                halt(500);
+                e.printStackTrace();
             }
+            return output;
         });
-
-
     }
 }

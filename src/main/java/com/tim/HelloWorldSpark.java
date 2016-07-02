@@ -10,12 +10,8 @@ import spark.Spark;
  */
 public class HelloWorldSpark {
     public static void main(String[] args) {
-        Spark.get(new Route("/") {
-
-            @Override
-            public Object handle(Request request, Response response) {
-                return "Hello Tim";
-            }
+        Spark.get("/", (request, response) -> {
+            return "Hello Tim";
         });
     }
 }
